@@ -1,21 +1,59 @@
 const express = require("express");
 const bodyParser = require("body-parser");
+const mongoose = require("mongoose");
 // const date = require(__dirname+"/date.js");
-const date = require("./views/date");
+// const date = require("./views/date");
 
 const app=express();
-let items=[]
-let workItems=[]
+// let items=[]
+// let workItems=[]
 // console.log(date)
 // console.log(date());
 
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"))
+mongoose.connect("mongodb://0.0.0.0:27017/To-Do-list");
+
+//schema
+
+const itemSchema = {
+    name:String 
+};
+
+const Item = mongoose.model("Item",itemSchema);
+
+const item1 =new Item({
+    name:"welcome"
+});
+
+const item2 =new Item({
+    name:"hiii"
+});
+const item3 =new Item({
+    name:"bye"
+});
+
+const defaultItems=[item1,item2,item3];
+// Item.insertMany(defaultItems)
+//   .then(function () {
+//     console.log("Successfully saved  items to DB");
+//   })
+//   .catch(function (err) {
+//     console.log(err);
+  
+// });
+
+async function getItems(){
+
+    const Items = await Item.find({});
+    return Items;
+    
+  }
 
 app.get("/",function(req,res){
     
-    let day= date.getDate()
+    // let day= date.getDate()
         // let today=new Date();
         
         // let options ={
@@ -62,7 +100,41 @@ app.get("/",function(req,res){
     //     break;
     //     default: console.log("Error :"+ currrentDay)
     // }~~~
-    res.render("list",{listTitle:day, newListItems : items});
+    // Item.find({})
+    // .then(function () {
+    //     console.log(data);
+    //   })
+    //   .catch(function (err) {
+    //     console.log(err);
+      
+    // });
+
+    // Item.find({}, function (err, docs) {
+    //     if (err){
+    //         console.log(err);  
+    //     }
+    //     else{
+    //         console.log("First function call : ", docs);
+    //     }
+    // });
+
+    getItems().then(function(FoundItems){
+        if(FoundItems.length===0){
+                Item.insertMany(defaultItems)
+                .then(function () {
+                    console.log("Successfully saved  items to DB");
+                })
+                .catch(function (err) {
+                    console.log(err);
+                
+                });
+        }
+        else{
+        
+        // console.log(FoundItems)
+    res.render("list",{listTitle:"Today", newListItems : FoundItems});
+        }
+    });
 });
 
 app.post("/",function(req,res){
