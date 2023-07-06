@@ -138,19 +138,44 @@ app.get("/",function(req,res){
 });
 
 app.post("/",function(req,res){
-    
+   
+    const itemName = req.body.newItem;
+    const item = new Item({
+        name: itemName
+    });
+
+    item.save();
+
+    res.redirect("/");
     // console.log(req.body);
-    let  item =req.body.newItem;
-    if(req.body.list==="Work"){
-        workItems.push(item) 
-        res.redirect("/work")
-    }else{
-        items.push(item);
-        res.redirect("/")
-    }
+    // let  item =req.body.newItem;
+    // if(req.body.list==="Work"){
+    //     workItems.push(item) 
+    //     res.redirect("/work")
+    // }else{
+    //     items.push(item);
+    //     res.redirect("/")
+    // }
     
    
-})
+});
+
+app.post("/delete",function(req,res){
+    const checkedItemId =req.body.checkbox;
+
+    Item.findByIdAndRemove(checkedItemId)
+    .then(function () {
+        console.log("Successfully deleted items from DB");
+    })
+
+    .catch(function (err) {
+        console.log(err);
+    
+    });
+    res.redirect("/")
+});
+
+
 app.get("/work",function(req,res){
     res.render("list",{listTitle:"Work List", newListItems:workItems})
 })
