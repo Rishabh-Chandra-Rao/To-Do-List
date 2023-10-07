@@ -11,7 +11,9 @@ const app=express();
 app.set('view engine','ejs');
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(express.static("public"))
-mongoose.connect("mongodb://0.0.0.0:27017/To-Do-list");
+// mongoose.connect("mongodb://0.0.0.0:27017/To-Do-list");
+
+mongoose.connect("mongodb+srv://rishabhrao:test123@cluster0.tjm4fit.mongodb.net/To-Do-list");
 
 
 //----------------------------Mongoose--------------------------------------//
